@@ -148,6 +148,10 @@ struct sr_ethernet_hdr
 } __attribute__ ((packed)) ;
 typedef struct sr_ethernet_hdr sr_ethernet_hdr_t;
 
+enum sr_ip_version {
+  ip_version_4 = 0x00000004,
+  ip_version_6 = 0x00000006,
+};
 
 
 enum sr_ip_protocol {
@@ -157,6 +161,23 @@ enum sr_ip_protocol {
 enum sr_ethertype {
   ethertype_arp = 0x0806,
   ethertype_ip = 0x0800,
+};
+
+enum sr_icmp_type {
+	icmp_type_echoreq 			= 0x08,
+	icmp_type_echoreply 		= 0x00,
+	icmp_type_ttl_expired 		= 0x0b,
+	icmp_type_dst_unrch 		= 0x03, 
+};
+
+enum sr_icmp_code_dst_unrch {
+	icmp_code_dst_unrch_host	=0x01,
+	icmp_code_dst_unrch_port	=0x03,
+};
+
+enum sr_icmp_code_ttl_expired {
+  icmp_code_ttl_expired_in_transit=0x00,
+  icmp_code_ttl_expired_fragment_reassembly=0x01,
 };
 
 
@@ -169,6 +190,14 @@ enum sr_arp_hrd_fmt {
   arp_hrd_ethernet = 0x0001,
 };
 
+enum sr_arp_protocol_fmt {
+	arp_protocol_ipv4 = ethertype_ip,	
+};
+
+enum sr_arp_protocol_len {
+	arp_protlen_eth = ETHER_ADDR_LEN,
+	arp_protlen_ipv4 = 0x04,
+};
 
 struct sr_arp_hdr
 {

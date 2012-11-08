@@ -69,6 +69,7 @@
 #include <inttypes.h>
 #include <time.h>
 #include <pthread.h>
+#include <stdbool.h>
 #include "sr_if.h"
 
 #define SR_ARPCACHE_SZ    100  
@@ -80,6 +81,7 @@ struct sr_packet {
     char *iface;                /* The outgoing interface */
     struct sr_packet *next;
 };
+typedef struct sr_packet sr_packet_t;
 
 struct sr_arpentry {
     unsigned char mac[6]; 
@@ -87,10 +89,12 @@ struct sr_arpentry {
     time_t added;         
     int valid;
 };
+typedef struct sr_arpentry sr_arpentry_t;
 
 struct sr_arpreq {
     uint32_t ip;
-    time_t sent;                /* Last time this ARP request was sent. You 
+    char iface[sr_IFACE_NAMELEN];/* The outgoing interface */
+    time_t sent;                 /* Last time this ARP request was sent. You 
                                    should update this. If the ARP request was 
                                    never sent, will be 0. */
     uint32_t times_sent;        /* Number of times this request was sent. You 
@@ -98,6 +102,7 @@ struct sr_arpreq {
     struct sr_packet *packets;  /* List of pkts waiting on this req to finish */
     struct sr_arpreq *next;
 };
+typedef struct sr_arpreq sr_arpreq_t;
 
 struct sr_arpcache {
     struct sr_arpentry entries[SR_ARPCACHE_SZ];
@@ -114,14 +119,13 @@ struct sr_arpentry *sr_arpcache_lookup(struct sr_arpcache *cache, uint32_t ip);
    the queue, adds the packet to the linked list of packets for this sr_arpreq
    that corresponds to this ARP request. The packet argument should not be
    freed by the caller.
-
    A pointer to the ARP request is returned; it should be freed. The caller
    can remove the ARP request from the queue by calling sr_arpreq_destroy. */
 struct sr_arpreq *sr_arpcache_queuereq(struct sr_arpcache *cache,
-                         uint32_t ip,
-                         uint8_t *packet,               /* borrowed */
-                         unsigned int packet_len,
-                         char *iface);
+                                       uint32_t ip,
+                                       uint8_t *packet,           /* borrowed */
+                                       unsigned int packet_len,
+                                       char *iface);
 
 /* This method performs two functions:
    1) Looks up this IP in the request queue. If it is found, returns a pointer

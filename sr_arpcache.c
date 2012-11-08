@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <sched.h>
 #include <string.h>
+#include <stdbool.h>
 #include "sr_arpcache.h"
 #include "sr_router.h"
 #include "sr_if.h"
@@ -16,8 +17,31 @@
   checking whether we should resend an request or destroy the arp request.
   See the comments in the header file for an idea of what it should look like.
 */
-void sr_arpcache_sweepreqs(struct sr_instance *sr) { 
-    /* Fill this in */
+
+
+void handle_arpreq(struct sr_instance *sr, sr_arpreq_t *arpreq) 
+{
+
+    
+    time_t now = current_time();
+    if (difftime(now, arpreq->sent) < 1.0)
+        return;
+           
+    if (arpreq->times_sent >= 5) {
+        //send icmp host unreachable to source addr of all pkts waiting on this request
+        reject_pending_packets(sr,arpreq);
+    } else {
+        send_arp_request(sr,arpreq->iface,arpreq->ip);
+        arpreq->sent = now;
+        arpreq->times_sent++;
+    }
+
+}
+
+void sr_arpcache_sweepreqs(struct sr_instance *sr) 
+{ 
+    for (sr_arpreq_t *req = sr->cache.requests; req != 0; req=req->next)
+        handle_arpreq(sr,req);
 }
 
 /* You should not need to touch the rest of this code. */
@@ -54,7 +78,7 @@ struct sr_arpentry *sr_arpcache_lookup(struct sr_arpcache *cache, uint32_t ip) {
    
    A pointer to the ARP request is returned; it should not be freed. The caller
    can remove the ARP request from the queue by calling sr_arpreq_destroy. */
-struct sr_arpreq *sr_arpcache_queuereq(struct sr_arpcache *cache,
+struct sr_arpreq * sr_arpcache_queuereq(struct sr_arpcache *cache,
                                        uint32_t ip,
                                        uint8_t *packet,           /* borrowed */
                                        unsigned int packet_len,
@@ -69,11 +93,14 @@ struct sr_arpreq *sr_arpcache_queuereq(struct sr_arpcache *cache,
         }
     }
     
-    /* If the IP wasn't found, add it */
+    /* If the IP wasn't found, add it*/
     if (!req) {
         req = (struct sr_arpreq *) calloc(1, sizeof(struct sr_arpreq));
         req->ip = ip;
         req->next = cache->requests;
+        req->sent = 0;
+        req->times_sent = 0;
+        strncpy(req->iface,iface,sr_IFACE_NAMELEN);
         cache->requests = req;
     }
     
@@ -84,8 +111,6 @@ struct sr_arpreq *sr_arpcache_queuereq(struct sr_arpcache *cache,
         new_pkt->buf = (uint8_t *)malloc(packet_len);
         memcpy(new_pkt->buf, packet, packet_len);
         new_pkt->len = packet_len;
-		new_pkt->iface = (char *)malloc(sr_IFACE_NAMELEN);
-        strncpy(new_pkt->iface, iface, sr_IFACE_NAMELEN);
         new_pkt->next = req->packets;
         req->packets = new_pkt;
     }

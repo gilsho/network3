@@ -32,9 +32,9 @@ ARCH = -D_DARWIN_
 SOCK = -lresolv
 endif
 
-CFLAGS = -g -Wall -ansi -D_DEBUG_ -D_GNU_SOURCE $(ARCH)
+CFLAGS = -g -Wall -std=gnu99 -D_DEBUG_ -D_GNU_SOURCE $(ARCH)
 
-LIBS= $(SOCK) -lm -lpthread
+LIBS= $(SOCK) -lm -lpthread -lrt
 PFLAGS= -follow-child-processes=yes -cache-dir=/tmp/${USER} 
 PURIFY= purify ${PFLAGS}
 
@@ -62,6 +62,9 @@ sr : $(sr_OBJS)
 
 sr.purify : $(sr_OBJS)
 	$(PURIFY) $(CC) $(CFLAGS) -o sr.purify $(sr_OBJS) $(LIBS)
+
+test : test.o sr_utils.o sr_arpcache.o sr_if.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 .PHONY : clean clean-deps dist    
 

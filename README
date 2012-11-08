@@ -1,0 +1,7 @@
+->Added enums to sr_protocol.h
+
+->added boolean return value to sr_arpchace_enqueue.c
+
+->sr_packet type stores an IP packet
+
+->moved interface to arpreq structure from arppacket
