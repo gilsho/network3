@@ -29,6 +29,7 @@
  
 
  #define TTL_VALUE 128
+ #define CHK_SUM_VALUE 0xffff
  
 /*---------------------------------------------------------------------
  * Method: sr_init(void)
@@ -270,15 +271,9 @@ bool valid_ip_packet(sr_ip_hdr_t *iphdr,unsigned int ip_len)
 	//Debug("IP Length in packet: [%d], IP Length Read [%d]\n",ntohs(iphdr->ip_len),ip_len);
 	if(ntohs(iphdr->ip_len) > ip_len)
 		return false;
-	
-	uint16_t stored_sum = iphdr->ip_sum;
-	iphdr->ip_sum = 0;
-	uint16_t computed_sum = cksum(iphdr,ntohs(iphdr->ip_len));
-	iphdr->ip_sum = stored_sum;						//restore checksum
-
 
 	//Debug("stored sum: [%d], computed sum: [%d]",stored_sum,computed_sum);
-	if (stored_sum != computed_sum)
+	if (cksum(iphdr,sizeof(sr_ip_hdr_t)) != CHK_SUM_VALUE)
 		return false;
 		
 	return true;
@@ -465,12 +460,8 @@ bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 		
 	if (icmphdr->icmp_type != icmp_type_echoreq)
 		return false;
-		
-	uint16_t stored_sum = icmphdr->icmp_sum;
-	icmphdr->icmp_sum = 0;
-	uint16_t computed_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
 	
-	if (computed_sum != stored_sum)
+	if (cksum(icmphdr,sizeof(sr_icmp_hdr_t)) != CHK_SUM_VALUE)
 		return false;
 		
 	return true;

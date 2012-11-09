@@ -609,7 +609,7 @@ void test_arp_request(struct sr_instance *sr)
 	iphdr->ip_ttl = 10;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -660,7 +660,7 @@ void test_arp_request(struct sr_instance *sr)
 	iphdr->ip_src = 0xffdab221;									//source unroutable!!
 	iphdr->ip_dst = 0x333333aa;									//destination - eth3
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 
 
 	//ethernet header
@@ -769,7 +769,7 @@ void test_arp_cache(struct sr_instance *sr)
 	iphdr->ip_ttl = 10;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -994,7 +994,7 @@ void test_icmp_ttl_exceeded(struct sr_instance *sr)
 	iphdr->ip_ttl = 1;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -1085,7 +1085,7 @@ void test_icmp_echo(struct sr_instance *sr)
 	iphdr->ip_ttl = 10;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -1168,7 +1168,7 @@ void test_icmp_port_unrch(struct sr_instance *sr)
 	iphdr->ip_ttl = 10;													//TTL;
 	iphdr->ip_p =	6;												//protocol - TCP
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -1252,7 +1252,7 @@ printf("%-70s","Testing dropping of messages sent to self...");
 	iphdr->ip_ttl = 1;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
@@ -1326,7 +1326,7 @@ printf("%-70s","Testing sending to unroutable hosts...");
 	iphdr->ip_ttl = 10;													//TTL;
 	iphdr->ip_p =	ip_protocol_icmp;									//protocol
 	iphdr->ip_sum = 0;													//checksum
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	
 	//ethernet header
 	ehdr->ether_dhost[0] = 0x11;
