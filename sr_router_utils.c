@@ -1,6 +1,6 @@
 
 
-
+/*
 struct sr_rt2
 {
     struct in_addr dest;
@@ -64,7 +64,7 @@ sr_rt2 *longest_prefix_match_trie(sr_rt2 *root, uint32_t lookup)
 	return (match != 0) ? match : rootmatch;
 
 }
-
+*/
 
 
 bool longest_prefix_match(struct sr_rt* routing_table, uint32_t lookup, struct sr_rt **best_match) 
