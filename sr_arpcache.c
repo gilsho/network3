@@ -194,8 +194,8 @@ void sr_arpreq_destroy(struct sr_arpcache *cache, struct sr_arpreq *entry) {
             nxt = pkt->next;
             if (pkt->buf)
                 free(pkt->buf);
-            if (pkt->iface)
-                free(pkt->iface);
+            /*if (pkt->iface)
+                free(pkt->iface); interface is passed in as a reference in my implementation*/ 
             free(pkt);
         }
         
