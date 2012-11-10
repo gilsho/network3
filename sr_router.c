@@ -512,6 +512,12 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 		return;
 	}
 
+	if (iphdr->ip_ttl <= 0) {
+		Debug("--TTL exceeded.\n");
+		send_ICMP_ttl_exceeded(sr,iphdr,iface);
+		return;
+	}
+
 	sr_if_t *iface; 
 	
 	if (my_ip_address(sr,iphdr->ip_dst,&iface))
@@ -527,11 +533,6 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 	iphdr->ip_sum = 0;
 	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 
-	if (iphdr->ip_ttl <= 0) {
-		Debug("--TTL exceeded.\n");
-		send_ICMP_ttl_exceeded(sr,iphdr,iface);
-		return;
-	}
 	
 	route_ip_packet(sr,iphdr,iface);	
 
