@@ -378,75 +378,79 @@ void wrap_ip_packet(struct sr_instance *sr,uint8_t *payload, unsigned int pyldle
 
 void send_ICMP_ttl_exceeded(struct sr_instance *sr, sr_ip_hdr_t *recv_iphdr,sr_if_t *iface)
 {
-  	sr_icmp_hdr_t icmphdr = = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
+  	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
+  	memset(icmphdr,0,ICMP_PACKET_SIZE);
 
-	icmphdr.icmp_type = icmp_type_ttl_expired;
-	icmphdr.icmp_code = icmp_code_ttl_expired_in_transit;
+	icmphdr->icmp_type = icmp_type_ttl_expired;
+	icmphdr->icmp_code = icmp_code_ttl_expired_in_transit;
 	
-	icmphdr.icmp_sum = 0;
-	icmphdr.icmp_sum = cksum(&icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = 0;
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 
 	uint32_t sip = iface->ip;
 	uint32_t dip = recv_iphdr->ip_src;
 
-	wrap_ip_packet(sr,(uint8_t *)&icmphdr,sizeof(sr_icmp_hdr_t),sip,dip,ip_protocol_icmp,iface);
+	wrap_ip_packet(sr,(uint8_t *)icmphdr,ICMP_PACKET_SIZE,sip,dip,ip_protocol_icmp,iface);
 
 	free(icmphdr);
 }
 
 void send_ICMP_host_unreachable(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr, sr_if_t *iface)
 {
-	sr_icmp_t3_hdr_t icmp3hdr = = (sr_icmp_t3_hdr_t *) malloc(ICMP_PACKET_SIZE);
+	sr_icmp_t3_hdr_t *icmp3hdr = (sr_icmp_t3_hdr_t *) malloc(ICMP_PACKET_SIZE);
+	memset(icmp3hdr,0,ICMP_PACKET_SIZE);
 
-	memcpy(&icmp3hdr.data,recv_iphdr,ICMP_DATA_SIZE);
+	memcpy(&icmp3hdr->data,recv_iphdr,ICMP_DATA_SIZE);
 
-	icmp3hdr.icmp_type = icmp_type_dst_unrch;
-	icmp3hdr.icmp_code = icmp_code_dst_unrch_host;
+	icmp3hdr->icmp_type = icmp_type_dst_unrch;
+	icmp3hdr->icmp_code = icmp_code_dst_unrch_host;
 
-	icmp3hdr.icmp_sum = 0;
-	icmp3hdr.icmp_sum = cksum(&icmp3hdr,sizeof(sr_icmp_t3_hdr_t));
+	icmp3hdr->icmp_sum = 0;
+	icmp3hdr->icmp_sum = cksum(icmp3hdr,ICMP_PACKET_SIZE);
 
 	uint32_t sip = iface->ip;
 	uint32_t dip = recv_iphdr->ip_src;
 	
-	wrap_ip_packet(sr,(uint8_t *)&icmp3hdr,sizeof(sr_icmp_t3_hdr_t),sip,dip,ip_protocol_icmp,iface);
+	wrap_ip_packet(sr,(uint8_t *)icmp3hdr,ICMP_PACKET_SIZE,sip,dip,ip_protocol_icmp,iface);
 
 	free(icmp3hdr);
 }
 
 void send_ICMP_port_unreachable(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t *iface)
 {
-	sr_icmp_t3_hdr_t icmp3hdr = = (sr_icmp_t3_hdr_t *) malloc(ICMP_PACKET_SIZE);
+	sr_icmp_t3_hdr_t *icmp3hdr = (sr_icmp_t3_hdr_t *) malloc(ICMP_PACKET_SIZE);
+	memset(icmp3hdr,0,ICMP_PACKET_SIZE);
 
-	memcpy(&icmp3hdr.data,recv_iphdr,ICMP_DATA_SIZE);
+	memcpy(&icmp3hdr->data,recv_iphdr,ICMP_DATA_SIZE);
 
-	icmp3hdr.icmp_type = icmp_type_dst_unrch;
-	icmp3hdr.icmp_code = icmp_code_dst_unrch_port;
+	icmp3hdr->icmp_type = icmp_type_dst_unrch;
+	icmp3hdr->icmp_code = icmp_code_dst_unrch_port;
 
-	icmp3hdr.icmp_sum = 0;
-	icmp3hdr.icmp_sum = cksum(&icmp3hdr,sizeof(sr_icmp_t3_hdr_t));
+	icmp3hdr->icmp_sum = 0;
+	icmp3hdr->icmp_sum = cksum(icmp3hdr,ICMP_PACKET_SIZE);
 
 	uint32_t sip = iface->ip;
 	uint32_t dip = recv_iphdr->ip_src;
 	
-	wrap_ip_packet(sr,(uint8_t *)&icmp3hdr,sizeof(sr_icmp_t3_hdr_t),sip,dip,ip_protocol_icmp,iface);
+	wrap_ip_packet(sr,(uint8_t *)icmp3hdr,ICMP_PACKET_SIZE,sip,dip,ip_protocol_icmp,iface);
 
-	free(icmphdr);
+	free(icmp3hdr);
 }
 
 void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t *iface)
 {
 
-	sr_icmp_hdr_t icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
-	icmphdr.icmp_type = icmp_type_echoreply;
-	icmphdr.icmp_code = 0x00;
-	icmphdr.icmp_sum = 0;
-	icmphdr.icmp_sum = cksum(&icmphdr,sizeof(sr_icmp_hdr_t));
+	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
+
+	icmphdr->icmp_type = icmp_type_echoreply;
+	icmphdr->icmp_code = 0x00;
+	icmphdr->icmp_sum = 0;
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 
 	uint32_t sip = iface->ip;
 	uint32_t dip = recv_iphdr->ip_src;
 	
-	wrap_ip_packet(sr,(uint8_t *)&icmphdr,sizeof(sr_icmp_hdr_t),sip,dip,ip_protocol_icmp,iface);
+	wrap_ip_packet(sr,(uint8_t *)icmphdr,ICMP_PACKET_SIZE,sip,dip,ip_protocol_icmp,iface);
 
 	free(icmphdr);
 }
