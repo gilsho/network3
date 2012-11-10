@@ -487,7 +487,7 @@ bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 void process_ip_payload(struct sr_instance *sr,sr_ip_hdr_t *iphdr,unsigned int iplen,sr_if_t *iface) 
 {
 	if (iphdr->ip_p != ip_protocol_icmp) {
-		Debug("--Non-ICMP packet addressed to router. invalid IP header.\n");
+		Debug("--Non-ICMP packet addressed to router. invalid IP header. dropping packet.\n");
 		send_ICMP_port_unreachable(sr,iphdr,iface);
 		return;
 	} 
@@ -496,7 +496,7 @@ void process_ip_payload(struct sr_instance *sr,sr_ip_hdr_t *iphdr,unsigned int i
 	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) extract_ip_payload(iphdr,iplen,&icmplen);
 	
 	if (!valid_icmp_echoreq(icmphdr,icmplen)) {
-		Debug("--Invalid ICMP echo request. dropping packet\n");
+		Debug("--Invalid ICMP echo request. dropping packet.\n");
 		return;
 	}
 	
@@ -517,6 +517,10 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 	sr_if_t *iface; 
 	iface = sr_get_interface(sr,ifname); 
 
+	//update time to live
+	iphdr->ip_ttl--;
+	iphdr->ip_sum = 0;
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 	if (iphdr->ip_ttl <= 0) {
 		Debug("--TTL exceeded.\n");
 		send_ICMP_ttl_exceeded(sr,iphdr,iface);
@@ -526,16 +530,10 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 	if (my_ip_address(sr,iphdr->ip_dst,&iface))
 	{
 		//IP packet destined to me directly
-		Debug("--Packet addressed to router");
+		Debug("--Packet addressed to router\n");
 		process_ip_payload(sr,iphdr,len,iface);
 		return;
 	} 
-
-	//update time to live
-	iphdr->ip_ttl--;
-	iphdr->ip_sum = 0;
-	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
-
 	
 	route_ip_packet(sr,iphdr,iface);	
 
