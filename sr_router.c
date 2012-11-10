@@ -437,11 +437,23 @@ void send_ICMP_port_unreachable(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,s
 	free(icmp3hdr);
 }
 
+uint8_t * extract_ip_payload(sr_ip_hdr_t *iphdr,unsigned int len,unsigned int *len_payload)
+{
+	if (len_payload != 0) {
+		*len_payload = len - sizeof(sr_ip_hdr_t);
+	}
+	return ((uint8_t *)iphdr+ sizeof(sr_ip_hdr_t));
+}
+
 void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t *iface)
 {
 
+	unsigned int icmp_len = 0;
+
+	sr_icmp_hdr_t *recv_icmphdr = (sr_icmp_hdr_t *) extract_ip_payload(recv_iphdr,recv_iphdr->ip_len,&icmp_len);
 	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
 
+	memcpy(icmphdr,recv_icmphdr,icmp_len);
 	icmphdr->icmp_type = icmp_type_echoreply;
 	icmphdr->icmp_code = 0x00;
 	icmphdr->icmp_sum = 0;
@@ -455,14 +467,6 @@ void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t 
 	free(icmphdr);
 }
 
-uint8_t * extract_ip_payload(sr_ip_hdr_t *iphdr,unsigned int len,unsigned int *len_payload)
-{
-	if (len_payload != 0) {
-		*len_payload = len - sizeof(sr_ip_hdr_t);
-	}
-	return ((uint8_t *)iphdr+ sizeof(sr_ip_hdr_t));
-}
-
 
 bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 {
@@ -472,7 +476,7 @@ bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 	if (icmphdr->icmp_type != icmp_type_echoreq)
 		return false;
 	
-	if (cksum(icmphdr,ICMP_PACKET_SIZE) != CHK_SUM_VALUE)
+	if (cksum(icmphdr,sizeof(sr_icmp_hdr_t)) != CHK_SUM_VALUE)
 		return false;
 		
 	return true;
