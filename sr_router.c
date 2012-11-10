@@ -84,6 +84,8 @@ void wrap_frame(struct sr_instance *sr,sr_if_t* interface, uint8_t *payload, uns
 	unsigned int offset = sizeof(sr_ethernet_hdr_t);
 	memcpy(buf+offset,payload,pyldlen);
 	
+	Debug("----- Sending frame ---------");
+	DebugFrame(frame,frlen);
 	sr_send_packet(sr,(uint8_t *) frame,frlen,interface->name);
 							   
 	free(frame);
