@@ -35,7 +35,7 @@ bool valid_icmp_hdr(sr_icmp_hdr_t *icmphdr, int t)
 	icmphdr->icmp_sum = 0;
 
 	int len = 0;
-	switch (t) 
+	/*switch (t) 
 	{
 		case icmp_type_dst_unrch:
 			len = sizeof(sr_icmp_t3_hdr_t);
@@ -45,7 +45,8 @@ bool valid_icmp_hdr(sr_icmp_hdr_t *icmphdr, int t)
 		default:
 			len = sizeof(sr_icmp_hdr_t);
 			break;
-	}
+	}*/
+	len = ICMP_PACKET_SIZE;
 
 	uint16_t computed_sum = cksum(icmphdr,len);
 	
@@ -743,7 +744,7 @@ void test_arp_cache(struct sr_instance *sr)
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -755,7 +756,7 @@ void test_arp_cache(struct sr_instance *sr)
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x1111111f;									//source - respond through eth1
@@ -968,7 +969,7 @@ void test_icmp_ttl_exceeded(struct sr_instance *sr)
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -980,7 +981,7 @@ void test_icmp_ttl_exceeded(struct sr_instance *sr)
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x22222287;									//source
@@ -1059,7 +1060,7 @@ void test_icmp_echo(struct sr_instance *sr)
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -1071,7 +1072,7 @@ void test_icmp_echo(struct sr_instance *sr)
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x22221233;									//source
@@ -1142,7 +1143,7 @@ void test_icmp_port_unrch(struct sr_instance *sr)
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -1154,7 +1155,7 @@ void test_icmp_port_unrch(struct sr_instance *sr)
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x22221233;									//source
@@ -1226,7 +1227,7 @@ printf("%-70s","Testing dropping of messages sent to self...");
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -1238,7 +1239,7 @@ printf("%-70s","Testing dropping of messages sent to self...");
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x11112344;									//source
@@ -1300,7 +1301,7 @@ printf("%-70s","Testing sending to unroutable hosts...");
 
 
 	// construct ICMP packet
-	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + sizeof(sr_icmp_hdr_t);
+	len = sizeof(sr_ethernet_hdr_t) + sizeof(sr_ip_hdr_t) + ICMP_PACKET_SIZE;
 	
 	frame = malloc(len);
 	
@@ -1312,7 +1313,7 @@ printf("%-70s","Testing sending to unroutable hosts...");
 	icmphdr->icmp_type = icmp_type_echoreq;
 	icmphdr->icmp_code =	0x00;
 	icmphdr->icmp_sum = 0;
-	icmphdr->icmp_sum = cksum(icmphdr,sizeof(sr_icmp_hdr_t));
+	icmphdr->icmp_sum = cksum(icmphdr,ICMP_PACKET_SIZE);
 	
 	//ip header
 	iphdr->ip_src = 0x1111119a;									//source

@@ -461,7 +461,7 @@ bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 	if (icmphdr->icmp_type != icmp_type_echoreq)
 		return false;
 	
-	if (cksum(icmphdr,sizeof(sr_icmp_hdr_t)) != CHK_SUM_VALUE)
+	if (cksum(icmphdr,ICMP_PACKET_SIZE) != CHK_SUM_VALUE)
 		return false;
 		
 	return true;

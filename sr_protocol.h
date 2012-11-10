@@ -43,6 +43,8 @@
 
 #ifndef IP_MAXPACKET
 #define IP_MAXPACKET 65535
+
+ #define ICMP_PACKET_SIZE 64
 #endif
 
 
