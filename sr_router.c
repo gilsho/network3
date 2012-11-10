@@ -514,23 +514,24 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 		return;
 	}
 
+	sr_if_t *iface; 
+	iface = sr_get_interface(sr,ifname); 
+
 	if (iphdr->ip_ttl <= 0) {
 		Debug("--TTL exceeded.\n");
 		send_ICMP_ttl_exceeded(sr,iphdr,iface);
 		return;
 	}
-
-	sr_if_t *iface; 
 	
 	if (my_ip_address(sr,iphdr->ip_dst,&iface))
 	{
 		//IP packet destined to me directly
+		Debug("--Packet addressed to router");
 		process_ip_payload(sr,iphdr,len,iface);
 		return;
 	} 
 
-	//packet needs to be routed
-	iface = sr_get_interface(sr,ifname); 
+	//update time to live
 	iphdr->ip_ttl--;
 	iphdr->ip_sum = 0;
 	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
