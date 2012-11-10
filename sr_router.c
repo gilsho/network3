@@ -452,7 +452,7 @@ void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t 
 
 	unsigned int icmp_len = 0;
 
-	sr_icmp_hdr_t *recv_icmphdr = (sr_icmp_hdr_t *) extract_ip_payload(recv_iphdr,recv_iphdr->ip_len,&icmp_len);
+	sr_icmp_hdr_t *recv_icmphdr = (sr_icmp_hdr_t *) extract_ip_payload(recv_iphdr,ntohs(recv_iphdr->ip_len),&icmp_len);
 	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
 
 	memcpy(icmphdr,recv_icmphdr,icmp_len);
