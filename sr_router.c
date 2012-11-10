@@ -470,13 +470,13 @@ void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t 
 
 bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 {
-	if  (icmplen <= sizeof(sr_icmp_hdr_t))
+	if  (icmplen < ICMP_PACKET_SIZE)
 		return false;
 		
 	if (icmphdr->icmp_type != icmp_type_echoreq)
 		return false;
 	
-	if (cksum(icmphdr,sizeof(sr_icmp_hdr_t)) != CHK_SUM_VALUE)
+	if (cksum(icmphdr,ICMP_PACKET_SIZE) != CHK_SUM_VALUE)
 		return false;
 		
 	return true;
