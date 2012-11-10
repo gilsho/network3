@@ -523,7 +523,7 @@ void handle_IP(struct sr_instance* sr, sr_ethernet_hdr_t *frame, unsigned int le
 	iface = sr_get_interface(sr,ifname); 
 	iphdr->ip_ttl--;
 	iphdr->ip_sum = 0;
-	iphdr->ip_sum = cksum(iphdr,ntohs(iphdr->ip_len));
+	iphdr->ip_sum = cksum(iphdr,sizeof(sr_ip_hdr_t));
 
 	if (iphdr->ip_ttl <= 0) {
 		Debug("--TTL exceeded.\n");
