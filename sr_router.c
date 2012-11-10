@@ -352,7 +352,7 @@ void wrap_ip_packet(struct sr_instance *sr,uint8_t *payload, unsigned int pyldle
 	unsigned int pktlen = sizeof(sr_ip_hdr_t) + pyldlen;
 	sr_ip_hdr_t *iphdr = malloc(pktlen);
 
-	iphdr->ip_hl = (unsigned int) sizeof(sr_ip_hdr_t); 
+	iphdr->ip_hl = (unsigned int) (sizeof(sr_ip_hdr_t)/4); 
 	iphdr->ip_v = ip_version_4;
 	iphdr->ip_tos = 0;							//unsupported
 	iphdr->ip_len = htons(pktlen); 
