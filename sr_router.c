@@ -383,6 +383,8 @@ void send_ICMP_ttl_exceeded(struct sr_instance *sr, sr_ip_hdr_t *recv_iphdr,sr_i
   	sr_icmp_hdr_t *icmphdr = (sr_icmp_hdr_t *) malloc(ICMP_PACKET_SIZE);
   	memset(icmphdr,0,ICMP_PACKET_SIZE);
 
+  	memcpy(&icmp3hdr->data,recv_iphdr,ICMP_DATA_SIZE);
+
 	icmphdr->icmp_type = icmp_type_ttl_expired;
 	icmphdr->icmp_code = icmp_code_ttl_expired_in_transit;
 	
@@ -468,7 +470,6 @@ void send_ICMP_echoreply(struct sr_instance *sr,sr_ip_hdr_t *recv_iphdr,sr_if_t 
 
 	free(icmphdr);
 }
-
 
 bool valid_icmp_echoreq(sr_icmp_hdr_t *icmphdr,unsigned int icmplen)
 {
