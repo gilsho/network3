@@ -17,7 +17,7 @@
 #include "sr_arpcache.h"
 
 /* we dont like this debug , but what to do for varargs ? */
-#ifdef _DEBUG6_
+#ifdef _DEBUG_
 #define DebugFrame(frame,len) print_hdrs(frame,len)
 #define Debug(x, args...) fprintf(stderr, x, ## args)
 #define DebugMAC(x) \
