@@ -69,6 +69,7 @@ int sr_read_from_server(struct sr_instance* );
 /* -- sr_router.c -- */
 void sr_init(struct sr_instance* );
 void sr_handlepacket(struct sr_instance* , uint8_t * , unsigned int , char* );
+void handle_arpreq(struct sr_instance *sr, sr_arpreq_t *arpreq);
 
 /* -- sr_if.c -- */
 void sr_add_interface(struct sr_instance* , const char* );

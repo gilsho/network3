@@ -18,26 +18,6 @@
   See the comments in the header file for an idea of what it should look like.
 */
 
-
-void handle_arpreq(struct sr_instance *sr, sr_arpreq_t *arpreq) 
-{
-
-    
-    time_t now = current_time();
-    if (difftime(now, arpreq->sent) < 1.0)
-        return;
-           
-    if (arpreq->times_sent >= 5) {
-        //send icmp host unreachable to source addr of all pkts waiting on this request
-        reject_pending_packets(sr,arpreq);
-    } else {
-        send_arp_request(sr,arpreq->iface,arpreq->ip);
-        arpreq->sent = now;
-        arpreq->times_sent++;
-    }
-
-}
-
 void sr_arpcache_sweepreqs(struct sr_instance *sr) 
 { 
     for (sr_arpreq_t *req = sr->cache.requests; req != 0; req=req->next)
